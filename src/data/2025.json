@@ -1,0 +1,56 @@
+{
+  "year": 2025,
+  "prizes": [
+    {
+      "category": "physics",
+      "laureates": [
+        { "name": "John Clarke", "name_ko": "존 클라크" },
+        { "name": "Michel H. Devoret", "name_ko": "미셸 H. 드보레" },
+        { "name": "John M. Martinis", "name_ko": "존 M. 마티니스" }
+      ],
+      "motivation": "for the discovery of macroscopic quantum mechanical tunnelling and energy quantisation in an electric circuit",
+      "motivation_ko": "전기회로에서 거시적 양자역학적 터널링과 에너지 양자화를 발견한 공로",
+      "motivation_verified": true,
+      "title_ko": "전기회로 속 양자 터널링",
+      "title_en": "Quantum Tunnelling in a Circuit",
+      "summary_ko": "손에 잡히는 크기의 회로가 벽을 넘지 않고 뚫고 나가는 순간을 본다.",
+      "summary_en": "Watch a circuit you could hold in your hand tunnel through a barrier.",
+      "official_url": "https://www.nobelprize.org/prizes/physics/2025/summary/",
+      "sim": "2025-physics-tunneling"
+    },
+    {
+      "category": "chemistry",
+      "laureates": [
+        { "name": "Susumu Kitagawa", "name_ko": "기타가와 스스무" },
+        { "name": "Richard Robson", "name_ko": "리처드 롭슨" },
+        { "name": "Omar M. Yaghi", "name_ko": "오마르 M. 야기" }
+      ],
+      "motivation": "for the development of metal–organic frameworks",
+      "motivation_ko": "금속유기골격체를 개발한 공로",
+      "motivation_verified": true,
+      "title_ko": "분자 스펀지, 금속유기골격체",
+      "title_en": "Molecular Sponges: MOFs",
+      "summary_ko": "금속 노드와 연결체를 골라 구멍 크기를 설계하고 원하는 기체만 붙잡는다.",
+      "summary_en": "Choose nodes and linkers to size the pores and trap only the gas you want.",
+      "official_url": "https://www.nobelprize.org/prizes/chemistry/2025/summary/",
+      "sim": "2025-chemistry-mof"
+    },
+    {
+      "category": "medicine",
+      "laureates": [
+        { "name": "Mary E. Brunkow", "name_ko": "메리 E. 브렁코" },
+        { "name": "Fred Ramsdell", "name_ko": "프레드 램즈델" },
+        { "name": "Shimon Sakaguchi", "name_ko": "사카구치 시몬" }
+      ],
+      "motivation": "for their discoveries concerning peripheral immune tolerance",
+      "motivation_ko": "말초 면역 관용에 관한 발견",
+      "motivation_verified": true,
+      "title_ko": "면역의 브레이크, 조절 T세포",
+      "title_en": "The Immune System's Brake",
+      "summary_ko": "조절 T세포 비율을 바꾸며 감염은 막고 내 몸은 지키는 균형점을 찾는다.",
+      "summary_en": "Tune regulatory T cells to beat an infection without attacking your own tissue.",
+      "official_url": "https://www.nobelprize.org/prizes/medicine/2025/summary/",
+      "sim": "2025-medicine-treg"
+    }
+  ]
+}
