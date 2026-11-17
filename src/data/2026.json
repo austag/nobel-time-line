@@ -20,13 +20,13 @@
         { "name": "Henri B. Kagan", "name_ko": "앙리 B. 카강" },
         { "name": "Kenso Soai", "name_ko": "소아이 겐소" }
       ],
-      "motivation": "for the discovery of nonlinear effects and autocatalysis in asymmetric organic synthesis",
+      "motivation": "for the discovery of non-linear effects and autocatalysis in asymmetric organic synthesis",
       "motivation_ko": "비대칭 유기합성의 비선형 효과와 자기촉매 작용 발견",
-      "motivation_verified": false,
+      "motivation_verified": true,
       "title_ko": "거울상 분자의 편 가르기",
       "title_en": "Mirror Molecules Pick a Side",
-      "summary_ko": "0.5%의 작은 차이가 반응을 거듭하며 한쪽 거울상만 남는 결과로 커진다.",
-      "summary_en": "A 0.5% imbalance grows, cycle by cycle, until one mirror form takes over.",
+      "summary_ko": "짝을 짓는 촉매와 스스로 불어나는 반응이 아주 작은 치우침을 한쪽 손만 남는 결과로 키운다.",
+      "summary_en": "Pairing catalysts and self-copying reactions grow a tiny imbalance until only one hand remains.",
       "official_url": "https://www.nobelprize.org/prizes/chemistry/2026/summary/",
       "sim": "2026-chemistry-soai"
     },
