@@ -3,6 +3,8 @@ import { FIELDS, FIRST_YEAR, LAST_YEAR, PRIZES, YEARS, findPrize, type Field, ty
 import { STR, type Lang, type Strings } from './i18n';
 import { previewSvg } from './previews';
 import { homeHash, parseHash, type Route } from './router';
+import { closeExperiment, isOpen, mountExperiment } from './experiment';
+import { hasSim } from './sims/registry';
 
 type Theme = 'light' | 'dark';
 
@@ -238,12 +240,25 @@ function renderNotFound(): void {
 function openOverlay(p: Prize): void {
   const s = t();
   const ko = state.lang === 'ko';
-  overlay.innerHTML = `
+  // 같은 체험이 이미 열려 있으면 그대로 둔다 (진행 상태 유지).
+  if (!overlay.hidden && isOpen(p)) {
+    const th = overlay.querySelector<HTMLButtonElement>('[data-action="theme"]');
+    if (th) th.textContent = state.theme === 'dark' ? s.themeToLight : s.themeToDark;
+    return;
+  }
+  closeExperiment();
+  const bar = `
   <div class="ov-bar">
-    <div class="ov-title">${shape(p.category)}<span>${p.year} ${esc(s[p.category])} | ${esc(ko ? p.title_ko : p.title_en)}</span></div>
+    <div class="ov-title" id="ov-title">${shape(p.category)}<span>${p.year} ${esc(s[p.category])} | ${esc(ko ? p.title_ko : p.title_en)}</span></div>
+    <button class="chip" data-action="theme">${esc(state.theme === 'dark' ? s.themeToLight : s.themeToDark)}</button>
     <button class="chip" data-action="copy">${esc(s.copyLink)}</button>
     <button class="chip" data-action="close" aria-label="${esc(s.close)}">✕</button>
-  </div>
+  </div>`;
+  if (hasSim(p.sim)) {
+    overlay.innerHTML = bar;
+    mountExperiment(overlay, p, { lang: state.lang, strings: s, toast });
+  } else {
+    overlay.innerHTML = `${bar}
   <div class="ov-body">
     <div class="ov-preview">${previewSvg(p.sim)}</div>
     <div class="ov-panel">
@@ -252,6 +267,10 @@ function openOverlay(p: Prize): void {
       <p><a href="${esc(p.official_url)}" target="_blank" rel="noopener">${esc(s.official)}</a></p>
     </div>
   </div>`;
+  }
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-labelledby', 'ov-title');
   overlay.hidden = false;
   document.body.classList.add('locked');
   overlay.querySelector<HTMLButtonElement>('[data-action="close"]')?.focus();
@@ -259,6 +278,7 @@ function openOverlay(p: Prize): void {
 
 function closeOverlay(): void {
   if (overlay.hidden) return;
+  closeExperiment();
   overlay.hidden = true;
   overlay.innerHTML = '';
   document.body.classList.remove('locked');

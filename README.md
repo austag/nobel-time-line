@@ -7,7 +7,8 @@
 ## 지금 상태
 
 - 홈 화면: 소개, 연도 타임라인, 부문과 연도 필터, 연도별 카드 목록, 한국어와 영어 전환, 밝은 테마와 어두운 테마
-- 체험 화면: 주소와 열고 닫기만 동작하고, 시뮬레이션은 준비 중입니다
+- 체험 화면: 캔버스, 컨트롤, 관찰, 조작, 이해 탭, 미션, 재생과 초기화
+- 완성된 체험: 2026 물리학(IceCube). 나머지 5개는 준비 중 안내가 나옵니다
 - 데이터: 2026년, 2025년 (2026년 수상 사유 원문은 아직 nobelprize.org에서 확인하지 않아 `motivation_verified: false`로 표시)
 
 ## 실행 방법
@@ -37,6 +38,8 @@ src/
   i18n.ts                     한국어, 영어 문구 (사이트 이름도 여기)
   router.ts                   주소 해석
   previews.ts                 카드 미리보기 그림
+  experiment.ts               체험 화면 (탭, 미션, 재생)
+  sims/                       체험 모듈과 공통 컨트롤
   main.ts                     화면 그리기와 이벤트
   styles.css                  디자인
 public/fonts/                 제목 글꼴
@@ -47,6 +50,12 @@ public/fonts/                 제목 글꼴
 1. `src/data/{연도}.json`을 기존 파일과 같은 형식으로 만듭니다.
 2. `src/data.ts`의 `YEAR_FILES`에 추가합니다.
 3. `src/previews.ts`에 `sim` 값과 같은 이름으로 미리보기 그림을 넣습니다.
+
+## 체험 모듈 추가하기
+
+1. `src/sims/{sim 값}/` 폴더에 `model.ts`(계산), `content.ts`(탭별 해설), `index.ts`(화면과 컨트롤)를 만듭니다. `2026-physics-icecube`가 예시입니다.
+2. `index.ts`는 `src/sims/types.ts`의 `SimModule` 형태를 기본 내보내기로 제공합니다.
+3. `src/sims/registry.ts`에 한 줄 추가합니다. 체험을 열 때만 불러옵니다.
 
 ## 배포
 

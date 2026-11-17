@@ -430,6 +430,299 @@ button {
   align-self: flex-start;
 }
 
+/* 체험 화면 (SPEC.md 6.1): 데스크톱은 캔버스와 패널 7:3, 모바일은 위아래로 */
+#overlay:has(.ov-main) {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#overlay[hidden] {
+  display: none !important;
+}
+.ov-main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 7fr 3fr;
+}
+.stage {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  touch-action: none;
+}
+.stage canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.loading {
+  margin: 24px;
+  color: var(--blue);
+}
+.side {
+  min-height: 0;
+  overflow-y: auto;
+  border-left: 2.5px solid var(--ink);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+}
+.ctrls {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border-bottom: 2.5px solid var(--ink);
+}
+.tabs {
+  display: flex;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--surface);
+  border-bottom: 2.5px solid var(--ink);
+}
+.tab {
+  flex: 1;
+  min-height: 46px;
+  border: 0;
+  background: none;
+  font: 400 17px var(--title);
+  color: var(--ink);
+}
+.tab + .tab {
+  border-left: 2px solid var(--ink);
+}
+.tab[aria-selected='true'] {
+  background: var(--blue);
+  color: var(--on-blue);
+}
+.explain {
+  padding: 4px 18px 20px;
+  font-size: 17px;
+}
+.explain h4 {
+  margin: 18px 0 4px;
+  font: 400 18px var(--title);
+  color: var(--blue);
+}
+.explain .q {
+  color: var(--blue);
+  border-left: 3px solid var(--blue);
+  padding-left: 10px;
+}
+.explain .eq {
+  margin: 10px 0;
+  overflow-x: auto;
+  font-size: 1.15em;
+}
+.explain math {
+  font-size: 1.05em;
+}
+.ov-bot {
+  display: flex;
+  gap: 10px;
+  padding: 10px 24px;
+  border-top: 2.5px solid var(--ink);
+  background: var(--surface);
+}
+
+/* 컨트롤 */
+.ctl {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ctl-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.ctl-row .v {
+  color: var(--blue);
+  font-variant-numeric: tabular-nums;
+}
+.ctl input[type='range'] {
+  width: 100%;
+  accent-color: var(--blue);
+}
+.tgl,
+.hold,
+.stepb {
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border: 2.5px solid var(--ink);
+  background: var(--surface);
+  text-align: left;
+}
+.stepb {
+  justify-content: center;
+  background: var(--blue);
+  color: var(--on-blue);
+  font: 400 17px var(--title);
+}
+.tgl .sw {
+  flex: none;
+  width: 36px;
+  height: 20px;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  position: relative;
+}
+.tgl .sw::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--ink);
+  transition: left 0.15s;
+}
+.tgl[aria-pressed='true'] .sw {
+  background: var(--blue);
+  border-color: var(--blue);
+}
+.tgl[aria-pressed='true'] .sw::after {
+  left: 18px;
+  background: var(--on-blue);
+}
+.tgl .st {
+  margin-left: auto;
+  color: var(--blue);
+}
+.hold {
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+.hold .lamp {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+}
+.hold.on .lamp {
+  background: var(--red);
+  border-color: var(--red);
+}
+.seg {
+  display: flex;
+  border: 2.5px solid var(--ink);
+}
+.seg button {
+  flex: 1;
+  min-height: 42px;
+  border: 0;
+  background: var(--surface);
+}
+.seg button + button {
+  border-left: 2px solid var(--ink);
+}
+.seg button[aria-pressed='true'] {
+  background: var(--blue);
+  color: var(--on-blue);
+}
+.readout {
+  white-space: pre-line;
+  padding: 10px 12px;
+  border: 2px dashed var(--blue);
+  color: var(--blue);
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 미션 */
+.missions {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.missions li {
+  border: 2px solid var(--ink);
+  padding: 10px 12px;
+}
+.missions li.done {
+  border-color: var(--blue);
+  box-shadow: 4px 4px 0 var(--blue);
+}
+.missions .mh {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.missions .ck {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin-top: 3px;
+  border: 2px solid var(--ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--red);
+  font-size: 17px;
+  line-height: 1;
+}
+.missions .res {
+  margin-top: 4px;
+  color: var(--blue);
+  font-size: 16px;
+}
+.missions details {
+  margin-top: 6px;
+  font-size: 16px;
+}
+.missions summary {
+  cursor: pointer;
+  color: var(--blue);
+}
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+@media (max-width: 767px) {
+  #overlay:has(.ov-main) {
+    overflow-y: auto;
+    display: block;
+  }
+  .ov-main {
+    display: block;
+  }
+  .stage {
+    height: 55vh;
+    height: 55dvh;
+    border-bottom: 2.5px solid var(--ink);
+  }
+  .side {
+    border-left: 0;
+    overflow: visible;
+  }
+  .tabs {
+    position: static;
+  }
+  .ov-bar,
+  .ov-bot {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
 /* 알림 */
 #toast {
   position: fixed;
