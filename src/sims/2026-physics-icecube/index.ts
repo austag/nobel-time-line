@@ -6,7 +6,8 @@ import { CONTENT } from './content';
 import * as M from './model';
 
 const DEFAULTS = { n: 1.31, beta: 0.99 };
-const SPEED = 4.2; // 화면에서 빛이 1초에 가는 칸 수
+const SPEED = 10.5; // 화면에서 빛이 1초에 가는 칸 수
+const REST = 2; // 빛이 다 퍼진 뒤 다음 이벤트까지 쉬는 시간 (초)
 const ROUNDS = 5;
 
 const MISSIONS: Mission[] = [
@@ -386,7 +387,7 @@ const create: SimFactory = () => {
       if (st.ev) {
         st.t += dt * SPEED;
         // 게임이 아닐 때는 빛이 다 퍼진 뒤 잠시 쉬고 다음 이벤트
-        if (!st.game && st.t > Math.max(st.ev.L / st.beta, st.tMax) + 8) newEvent();
+        if (!st.game && st.t > Math.max(st.ev.L / st.beta, st.tMax) + REST * SPEED) newEvent();
       }
       draw();
     },
