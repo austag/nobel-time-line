@@ -2,8 +2,8 @@ import './styles.css';
 import { FIELDS, FIRST_YEAR, LAST_YEAR, PRIZES, YEARS, findPrize, type Field, type Prize } from './data';
 import { STR, type Lang, type Strings } from './i18n';
 import { previewSvg } from './previews';
-import { homeHash, parseHash, type Route } from './router';
-import { closeExperiment, isOpen, mountExperiment } from './experiment';
+import { experimentHash, homeHash, parseHash, type Route } from './router';
+import { closeExperiment, isOpen, mountExperiment, showChapter } from './experiment';
 import { hasSim } from './sims/registry';
 
 type Theme = 'light' | 'dark';
@@ -237,13 +237,14 @@ function renderNotFound(): void {
 
 /* ---------- 체험 오버레이 ---------- */
 
-function openOverlay(p: Prize): void {
+function openOverlay(p: Prize, chapter?: string): void {
   const s = t();
   const ko = state.lang === 'ko';
   // 같은 체험이 이미 열려 있으면 그대로 둔다 (진행 상태 유지).
   if (!overlay.hidden && isOpen(p)) {
     const th = overlay.querySelector<HTMLButtonElement>('[data-action="theme"]');
     if (th) th.textContent = state.theme === 'dark' ? s.themeToLight : s.themeToDark;
+    showChapter(chapter);
     return;
   }
   closeExperiment();
@@ -256,7 +257,14 @@ function openOverlay(p: Prize): void {
   </div>`;
   if (hasSim(p.sim)) {
     overlay.innerHTML = bar;
-    mountExperiment(overlay, p, { lang: state.lang, strings: s, toast });
+    mountExperiment(overlay, p, {
+      lang: state.lang,
+      strings: s,
+      toast,
+      chapter,
+      // 장을 바꾸면 주소에도 남겨서 공유 링크가 그 장으로 열리게 한다.
+      onChapter: (id) => history.replaceState(null, '', experimentHash(p.year, p.category, id)),
+    });
   } else {
     overlay.innerHTML = `${bar}
   <div class="ov-body">
@@ -300,7 +308,7 @@ function applyRoute(): void {
       return;
     }
     if (state.page !== 'home') renderHome();
-    openOverlay(prize);
+    openOverlay(prize, route.chapter);
     return;
   }
 

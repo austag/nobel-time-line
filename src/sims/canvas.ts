@@ -92,7 +92,9 @@ export function text(
 ): void {
   ctx.save();
   ctx.fillStyle = o.color ?? pal.ink;
-  ctx.font = `${o.size ?? 14}px ${o.title ? pal.title : pal.body}`;
+  // 제목 글꼴에는 그리스 문자와 ° 같은 기호가 없어서, 그런 글자가 있으면 본문 글꼴로 쓴다.
+  const plain = /^[\u0020-\u007e\uac00-\ud7a3\u3131-\u318e]*$/.test(s) && !/[°]/.test(s);
+  ctx.font = `${o.size ?? 14}px ${o.title && plain ? pal.title : pal.body}`;
   ctx.textAlign = o.align ?? 'left';
   ctx.textBaseline = o.base ?? 'alphabetic';
   ctx.fillText(s, x, y);
@@ -119,4 +121,10 @@ export function arrow(ctx: CanvasRenderingContext2D, x1: number, y1: number, x2:
   ctx.closePath();
   ctx.fill();
   ctx.restore();
+}
+
+const SUP: Record<string, string> = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻' };
+/** 10의 거듭제곱 표기: pow10(7) → "10⁷" */
+export function pow10(e: number): string {
+  return '10' + String(e).split('').map((c) => SUP[c] ?? c).join('');
 }

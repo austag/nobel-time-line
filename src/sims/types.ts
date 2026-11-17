@@ -17,6 +17,15 @@ export interface TabContent {
   understand: string;
 }
 
+export interface ChapterInfo {
+  id: string;
+  ko: string;
+  en: string;
+}
+
+/** 연구 노트: 장 id → 기록 key → 문장 */
+export type Notes = Record<string, Record<string, string>>;
+
 /** 체험 화면(호스트)이 모듈에 넘겨주는 기능 */
 export interface Host {
   /** 모듈이 컨트롤을 넣는 자리 */
@@ -29,13 +38,24 @@ export interface Host {
   result(id: string, result: string): void;
   isPaused(): boolean;
   setPaused(paused: boolean): void;
+  /** 연구 노트에 한 줄 남긴다. 같은 key 는 새 문장으로 바뀐다. */
+  note(chapter: string, key: string, text: string): void;
+  /** 짧은 알림 */
+  toast(message: string): void;
 }
 
 export interface SimModule {
   id: string;
-  missions: Mission[];
-  content: Record<Lang, TabContent>;
-  mount(container: HTMLElement, opts: { lang: Lang; host: Host }): void;
+  /** 장이 여러 개인 체험만 */
+  chapters?: ChapterInfo[];
+  chapter?(): string;
+  setChapter?(id: string): void;
+  /** 모든 장에 노트가 있을 때 보여 줄 논문 초록 */
+  abstract?(lang: Lang, notes: Notes): string;
+  /** 지금 장의 미션과 해설 */
+  missions(): Mission[];
+  content(lang: Lang): TabContent;
+  mount(container: HTMLElement, opts: { lang: Lang; host: Host; chapter?: string }): void;
   /** 매 프레임 호출. 일시정지 중에는 dt = 0 */
   frame(dt: number): void;
   setTab(tab: Tab): void;

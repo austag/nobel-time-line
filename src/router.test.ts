@@ -14,6 +14,8 @@ describe('parseHash', () => {
   it('체험과 소개 주소를 읽는다', () => {
     expect(parseHash('#/2026/physics')).toEqual({ name: 'experiment', year: 2026, field: 'physics' });
     expect(parseHash('#/about')).toEqual({ name: 'about' });
+    expect(parseHash('#/2026/physics?ch=3')).toEqual({ name: 'experiment', year: 2026, field: 'physics', chapter: '3' });
+    expect(parseHash('#/2026/physics?ch=<x>')).toEqual({ name: 'experiment', year: 2026, field: 'physics' });
     expect(parseHash('#/nope/x/y')).toEqual({ name: 'notfound' });
   });
   it('homeHash 는 parseHash 와 짝이 맞는다', () => {

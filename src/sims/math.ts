@@ -4,7 +4,7 @@ import katex from 'katex';
 // MathML로 내보내서 KaTeX 글꼴과 CSS 없이도 브라우저가 그린다.
 function tex(src: string, display: boolean): string {
   try {
-    return katex.renderToString(src, { displayMode: display, output: 'mathml', throwOnError: false });
+    return katex.renderToString(src, { displayMode: display, output: 'mathml', throwOnError: false, strict: false });
   } catch {
     return `<code>${src.replace(/</g, '&lt;')}</code>`;
   }
