@@ -37,9 +37,9 @@
         { "name": "Peter Hegemann", "name_ko": "페터 헤게만" },
         { "name": "Georg Nagel", "name_ko": "게오르크 나겔" }
       ],
-      "motivation": "for the discovery of light-gated ion channels and the development of optogenetics",
-      "motivation_ko": "빛으로 여닫히는 이온 채널 발견과 광유전학 개발",
-      "motivation_verified": false,
+      "motivation": "for their discoveries concerning light-gated ion channels and optogenetics",
+      "motivation_ko": "빛으로 여닫히는 이온 채널과 광유전학에 관한 발견",
+      "motivation_verified": true,
       "title_ko": "빛으로 켜는 뉴런",
       "title_en": "Switching Neurons On with Light",
       "summary_ko": "파란 빛을 비추면 발화하고 노란 빛을 비추면 잠잠해지는 뉴런을 직접 조종한다.",

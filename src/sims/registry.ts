@@ -5,6 +5,7 @@ import type { SimFactory } from './types';
 const LOADERS: Record<string, () => Promise<{ default: SimFactory }>> = {
   '2026-physics-icecube': () => import('./2026-physics-icecube'),
   '2026-chemistry-soai': () => import('./2026-chemistry-soai'),
+  '2026-medicine-optogenetics': () => import('./2026-medicine-optogenetics'),
 };
 
 export function hasSim(id: string): boolean {
