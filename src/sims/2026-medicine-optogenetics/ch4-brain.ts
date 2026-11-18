@@ -356,10 +356,13 @@ export function chapter4(): Chapter {
       const ex = X(EYE.x) + tw;
       const ey = Y(EYE.y);
       const er = w * EYE.r;
-      c.fillStyle = pal.paper;
-      c.beginPath();
-      c.arc(ex, ey, er * 1.5, 0, TAU);
-      c.fill();
+      // 몸 안쪽과 같은 색으로 덮는다 (종이색 위에 옅은 잉크 한 겹)
+      for (const fill of [pal.paper, alpha(pal.ink, 0.07)]) {
+        c.fillStyle = fill;
+        c.beginPath();
+        c.arc(ex, ey, er * 1.45, 0, TAU);
+        c.fill();
+      }
       c.strokeStyle = pal.ink;
       c.lineWidth = Math.max(2, w * 0.008);
       c.lineCap = 'round';
@@ -371,17 +374,20 @@ export function chapter4(): Chapter {
       text(c, pal, 'z', X(0.9) + zz * w * 0.05, Y(0.22) - zz * h * 0.12, { size: w * 0.05 + 6, color: alpha(pal.ink, 1 - zz) });
       text(c, pal, 'Z', X(0.97) + zz * w * 0.05, Y(0.12) - zz * h * 0.12, { size: w * 0.07 + 6, color: alpha(pal.ink, 0.7 * (1 - zz)) });
     }
-    // 수염 (빛에 맞춰 움직인다)
-    c.strokeStyle = pal.blue;
-    c.lineWidth = Math.max(1.5, w * 0.006);
-    const bx = X(NOSE.x) + tw;
+    // 수염 (빛에 맞춰 움직인다). 끝이 뒤쪽(왼쪽)을 향하고, 몸 선과 겹쳐도 보이게 빨간색으로 그린다
+    c.strokeStyle = pal.red;
+    c.lineWidth = Math.max(1.8, w * 0.007);
+    c.lineCap = 'round';
+    const bx = X(NOSE.x - 0.02) + tw;
     const by = Y(NOSE.y);
     const wl = w * 0.17;
-    for (const off of [-0.5, -0.2, 0.12, 0.42]) {
-      const a = off + st.angle * 0.5;
+    for (const off of [-0.1, 0.12, 0.34, 0.56]) {
+      const a = Math.PI + off + st.angle * 0.45;
+      const mx = bx + wl * 0.55 * Math.cos(a);
+      const my = by + wl * 0.55 * Math.sin(a);
       c.beginPath();
       c.moveTo(bx, by);
-      c.quadraticCurveTo(bx + wl * 0.55 * Math.cos(a), by + wl * 0.55 * Math.sin(a) - wl * 0.1, bx + wl * Math.cos(a), by + wl * Math.sin(a));
+      c.quadraticCurveTo(mx, my - wl * 0.12, bx + wl * Math.cos(a), by + wl * Math.sin(a));
       c.stroke();
     }
     c.restore();
