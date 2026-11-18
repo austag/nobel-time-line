@@ -4,6 +4,7 @@ import { makeCanvas, readPalette, type Canvas, type Palette } from '../canvas';
 import type { Host, Lang, SimFactory, SimModule } from '../types';
 import type { Chapter, Ctx, Pt } from './chapter';
 import { chapter1 } from './ch1-alga';
+import { clearTints } from './sprite';
 import { chapter2 } from './ch2-oocyte';
 import { chapter3 } from './ch3-neuron';
 import { chapter4 } from './ch4-brain';
@@ -96,6 +97,7 @@ const create: SimFactory = () => {
     },
     setTheme() {
       pal = readPalette();
+      clearTints(); // 칠해 둔 그림 사본을 새 테마 색으로 다시 만든다
     },
     reset() {
       cur.reset();

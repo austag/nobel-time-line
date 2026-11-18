@@ -5,12 +5,17 @@ import { hold, readout, segment, stepButton, toggle } from '../ui';
 import { k, tr, type Chapter, type Ctx, type Pt } from './chapter';
 import { caption, inBox, pulse, trace, type Box } from './draw';
 import { HUES, rng } from './model';
+import { drawSprite, loadSprite } from './sprite';
+import mouseUrl from './mouse.png';
+import mouseBodyUrl from './mouse-body.png';
 
 type Region = 'motor' | 'wake';
 type Target = 'none' | 'motor' | 'wake' | 'all';
 const BLUE = HUES[1].col;
 const YELLOW = HUES[4].col;
 const SAMPLES = 240;
+const MOUSE = loadSprite(mouseUrl);
+const BODY = loadSprite(mouseBodyUrl);
 
 interface Dot {
   region: Region;
@@ -319,136 +324,97 @@ export function chapter4(): Chapter {
 
   function drawMouse(c: CanvasRenderingContext2D, R: Box, ko: boolean): void {
     const pal = ctx.pal();
-    const s = Math.min(R.w / 320, R.h / 170);
-    const ox = R.x + (R.w - 320 * s) / 2;
-    const oy = R.y + (R.h - 170 * s) / 2 + 20 * s;
-    const X = (x: number) => ox + x * s;
-    const Y = (y: number) => oy + y * s;
-    c.save();
-    c.lineWidth = 2;
-    c.strokeStyle = pal.ink;
-    c.lineJoin = 'round';
-    c.lineCap = 'round';
-    // 숨 쉬는 느낌: 몸이 아주 조금 오르내린다
-    const breathe = Math.sin(st.t * (st.awake ? 2.4 : 1.2)) * (st.awake ? 1.2 : 2);
-    const B = (y: number) => Y(y + breathe);
-    // 꼬리 (동글게 말린 꼬리)
-    c.strokeStyle = pal.ink;
-    c.lineWidth = 2.5;
-    c.beginPath();
-    c.moveTo(X(84), B(118));
-    c.bezierCurveTo(X(52), B(136), X(26), B(126), X(22), B(106));
-    c.bezierCurveTo(X(19), B(92), X(36), B(88), X(38), B(100));
-    c.stroke();
-    // 뒷발과 앞발 (움찔하면 들썩)
-    const tw = st.twitch * Math.sin(st.t * 40) * 5;
-    c.fillStyle = alpha(pal.ink, 0.1);
-    c.lineWidth = 2;
-    for (const [lx, ly] of [
-      [124, 134],
-      [206, 136],
-    ]) {
-      c.beginPath();
-      c.ellipse(X(lx + tw), B(ly + Math.abs(tw) * 0.4), 15 * s, 7.5 * s, 0, 0, TAU);
-      c.fill();
-      c.stroke();
+    // 아이콘 안에서의 자리 (0~1): 눈, 코끝, 머리 위
+    const EYE = { x: 0.793, y: 0.409, r: 0.031 };
+    const NOSE = { x: 0.985, y: 0.47 };
+    // 광섬유를 꽂는 자리: 귀 뒤쪽 머리 위 (운동 피질은 조금 뒤, 시상하부는 조금 앞)
+    const PORT = st.fiber === 'motor' ? { x: 0.55, y: 0.19 } : { x: 0.6, y: 0.156 };
+    const ratio = MOUSE.ok() ? MOUSE.h() / MOUSE.w() : 1;
+    const w = Math.min(R.w * 0.92, (R.h - 30) / ratio);
+    const h = w * ratio;
+    const ox = R.x + (R.w - w) / 2;
+    const breathe = Math.sin(st.t * (st.awake ? 2.4 : 1.2)) * (st.awake ? 1.5 : 2.5);
+    const tw = st.twitch * Math.sin(st.t * 40) * 4;
+    const oy = R.y + (R.h - h) / 2 + breathe;
+    const X = (u: number) => ox + u * w;
+    const Y = (v: number) => oy + v * h;
+    // 몸 안쪽을 옅게 채우고 그 위에 선을 얹는다
+    drawSprite(c, BODY, ox + tw, oy, w, h, { color: pal.ink, alpha: 0.07 });
+    const drawn = drawSprite(c, MOUSE, ox + tw, oy, w, h, { color: pal.ink });
+    if (!drawn) {
+      text(c, pal, ko ? '생쥐 그림을 불러오는 중' : 'loading the mouse', R.x + R.w / 2, R.y + R.h / 2, { size: 13, align: 'center' });
+      return;
     }
-    // 몸과 머리를 한 덩어리로 (통통한 실루엣)
-    c.fillStyle = alpha(pal.ink, 0.07);
-    c.lineWidth = 2.5;
-    c.beginPath();
-    c.moveTo(X(84), B(112));
-    c.bezierCurveTo(X(80), B(72), X(120), B(50), X(164), B(52));
-    c.bezierCurveTo(X(198), B(54), X(216), B(64), X(232), B(74));
-    c.bezierCurveTo(X(258), B(82), X(280), B(94), X(288), B(104));
-    c.bezierCurveTo(X(293), B(112), X(284), B(119), X(272), B(119));
-    c.bezierCurveTo(X(252), B(124), X(242), B(128), X(230), B(132));
-    c.bezierCurveTo(X(196), B(146), X(122), B(146), X(98), B(132));
-    c.bezierCurveTo(X(88), B(126), X(84), B(120), X(84), B(112));
-    c.fill();
-    c.stroke();
-    // 귀 (크고 동그랗게)
-    c.fillStyle = alpha(pal.ink, 0.07);
-    c.beginPath();
-    c.arc(X(214), B(56), 21 * s, 0, TAU);
-    c.fill();
-    c.stroke();
-    c.fillStyle = alpha(pal.red, 0.3);
-    c.beginPath();
-    c.arc(X(214), B(56), 11 * s, 0, TAU);
-    c.fill();
+    c.save();
     // 볼 (발그레)
-    c.fillStyle = alpha(pal.red, 0.22);
+    c.fillStyle = alpha(pal.red, 0.2);
     c.beginPath();
-    c.ellipse(X(264), B(104), 10 * s, 6.5 * s, 0, 0, TAU);
+    c.ellipse(X(0.86) + tw, Y(0.48), w * 0.05, w * 0.033, 0, 0, TAU);
     c.fill();
-    // 눈
-    if (st.awake) {
-      c.fillStyle = pal.ink;
+    // 자는 동안에는 눈을 감는다 (아이콘의 눈을 가리고 감은 눈을 그린다)
+    if (!st.awake) {
+      const ex = X(EYE.x) + tw;
+      const ey = Y(EYE.y);
+      const er = w * EYE.r;
+      c.fillStyle = pal.paper;
       c.beginPath();
-      c.arc(X(258), B(94), 5 * s, 0, TAU);
+      c.arc(ex, ey, er * 1.5, 0, TAU);
       c.fill();
-      // 눈동자 반짝임
-      c.fillStyle = pal.surface || '#fff';
-      c.beginPath();
-      c.arc(X(259.6), B(92.2), 1.8 * s, 0, TAU);
-      c.fill();
-    } else {
       c.strokeStyle = pal.ink;
-      c.lineWidth = 2.2;
+      c.lineWidth = Math.max(2, w * 0.008);
+      c.lineCap = 'round';
       c.beginPath();
-      c.moveTo(X(251), B(94));
-      c.quadraticCurveTo(X(258), B(100), X(265), B(94));
+      c.moveTo(ex - er, ey);
+      c.quadraticCurveTo(ex, ey + er * 1.3, ex + er, ey);
       c.stroke();
       const zz = (st.t * 0.6) % 1;
-      text(c, pal, 'z', X(276 + zz * 18), B(52 - zz * 26), { size: 13 * s + 6, color: alpha(pal.ink, 1 - zz) });
-      text(c, pal, 'Z', X(292 + zz * 18), B(36 - zz * 26), { size: 17 * s + 6, color: alpha(pal.ink, 0.7 * (1 - zz)) });
+      text(c, pal, 'z', X(0.9) + zz * w * 0.05, Y(0.22) - zz * h * 0.12, { size: w * 0.05 + 6, color: alpha(pal.ink, 1 - zz) });
+      text(c, pal, 'Z', X(0.97) + zz * w * 0.05, Y(0.12) - zz * h * 0.12, { size: w * 0.07 + 6, color: alpha(pal.ink, 0.7 * (1 - zz)) });
     }
-    // 코
-    c.fillStyle = pal.red;
-    c.beginPath();
-    c.ellipse(X(287), B(106), 4.5 * s, 3.6 * s, 0, 0, TAU);
-    c.fill();
-    // 수염
+    // 수염 (빛에 맞춰 움직인다)
     c.strokeStyle = pal.blue;
-    c.lineWidth = 1.6;
-    const base = { x: X(284), y: B(108) };
+    c.lineWidth = Math.max(1.5, w * 0.006);
+    const bx = X(NOSE.x) + tw;
+    const by = Y(NOSE.y);
+    const wl = w * 0.17;
     for (const off of [-0.5, -0.2, 0.12, 0.42]) {
       const a = off + st.angle * 0.5;
       c.beginPath();
-      c.moveTo(base.x, base.y);
-      c.quadraticCurveTo(base.x + 28 * s * Math.cos(a), base.y + 28 * s * Math.sin(a) - 5 * s, base.x + 52 * s * Math.cos(a), base.y + 52 * s * Math.sin(a));
+      c.moveTo(bx, by);
+      c.quadraticCurveTo(bx + wl * 0.55 * Math.cos(a), by + wl * 0.55 * Math.sin(a) - wl * 0.1, bx + wl * Math.cos(a), by + wl * Math.sin(a));
       c.stroke();
     }
-    // 광섬유
-    const fx = X(st.fiber === 'motor' ? 238 : 252);
-    const fy = B(72);
+    c.restore();
+    // 광섬유 (머리 위로 꽂혀 있다)
+    const fx = X(PORT.x) + tw;
+    const fy = Y(PORT.y);
+    c.save();
     c.strokeStyle = pal.ink;
     c.lineWidth = 3;
     c.beginPath();
     c.moveTo(fx, fy);
-    c.lineTo(fx, Y(-10));
+    c.lineTo(fx, R.y - 4);
     c.stroke();
     c.fillStyle = alpha(pal.ink, 0.6);
     c.beginPath();
-    c.roundRect(fx - 6, fy - 10, 12, 12, 3);
+    c.roundRect(fx - 6, fy - 12, 12, 13, 3);
     c.fill();
     const col = st.blue ? BLUE : st.yellow ? YELLOW : null;
     if (col) {
       c.strokeStyle = alpha(col, 0.9);
       c.lineWidth = 5;
       c.beginPath();
-      c.moveTo(fx, fy - 4);
-      c.lineTo(fx, Y(-10));
+      c.moveTo(fx, fy - 6);
+      c.lineTo(fx, R.y - 4);
       c.stroke();
       c.fillStyle = alpha(col, 0.35);
       c.beginPath();
-      c.arc(fx, fy + 4, 13 * s, 0, TAU);
+      c.arc(fx, fy + 6, w * 0.035, 0, TAU);
       c.fill();
     }
     c.restore();
-    text(c, pal, ko ? '광섬유' : 'optical fibre', fx + 8, Y(-2), { size: 11 });
-    if (st.twitch > 0.1) text(c, pal, ko ? '다리가 움찔!' : 'legs jerk!', X(150), Y(165), { size: 12, align: 'center', color: pal.blue });
+    text(c, pal, ko ? '광섬유' : 'optical fibre', fx + 8, R.y + 8, { size: 11 });
+    if (st.twitch > 0.1) text(c, pal, ko ? '다리가 움찔!' : 'legs jerk!', X(0.3), Y(0.97), { size: 12, align: 'center', color: pal.blue });
   }
 
   function drawRegion(c: CanvasRenderingContext2D, reg: Region, R: Box, ko: boolean): void {
