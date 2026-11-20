@@ -1,6 +1,7 @@
 // 체험 화면: 장 선택, 캔버스, 컨트롤, 해설 탭(관찰, 조작, 이해), 연구 노트, 재생과 초기화 (SPEC.md 6.1, 6.2)
 import type { Prize } from './data';
 import type { Lang, Strings } from './i18n';
+import { qrrFor } from './qrr';
 import { loadSim } from './sims/registry';
 import type { Host, Notes, SimModule, Tab } from './sims/types';
 import { h } from './sims/ui';
@@ -26,6 +27,7 @@ interface Session {
   onChapter: (id: string) => void;
   els: {
     chapters: HTMLElement;
+    qrr: HTMLElement;
     stage: HTMLElement;
     controls: HTMLElement;
     tabs: HTMLElement;
@@ -90,11 +92,12 @@ export function mountExperiment(
   const tabs = h('div', { class: 'tabs', role: 'tablist', 'aria-label': S.explainTabs });
   const explain = h('div', { class: 'explain', role: 'tabpanel', id: 'explain', tabindex: '0' });
   const notebook = h('section', { class: 'notebook', hidden: true });
+  const qrr = h('section', { class: 'qrr', hidden: true, 'aria-live': 'polite' });
   const play = h('button', { class: 'chip', type: 'button' }) as HTMLButtonElement;
   const reset = h('button', { class: 'chip', type: 'button' }) as HTMLButtonElement;
   root.append(
     chapters,
-    h('div', { class: 'ov-main' }, stage, h('aside', { class: 'side' }, controls, tabs, explain, notebook)),
+    h('div', { class: 'ov-main' }, stage, h('aside', { class: 'side' }, qrr, controls, tabs, explain, notebook)),
     h('div', { class: 'ov-bot' }, play, reset),
   );
 
@@ -109,7 +112,7 @@ export function mountExperiment(
     notes: loadNotes(prize.sim),
     observer: new MutationObserver(() => s.mod?.setTheme()),
     onChapter: opts.onChapter,
-    els: { chapters, stage, controls, tabs, explain, notebook, play, reset },
+    els: { chapters, qrr, stage, controls, tabs, explain, notebook, play, reset },
   };
   cur = s;
 
@@ -131,6 +134,7 @@ export function mountExperiment(
         notify(`${S.missionDone}: ${m ? m[lang] : id}`);
       }
       if (s.tab === 'interact') renderExplain();
+      renderQrr();
     },
     result(id, res) {
       s.results[id] = res;
@@ -145,6 +149,7 @@ export function mountExperiment(
       (s.notes[chapter] ??= {})[key] = text;
       saveNotes(s.prize.sim, s.notes);
       renderNotebook();
+      renderQrr();
     },
     toast: (m) => notify(m),
   };
@@ -166,6 +171,7 @@ export function mountExperiment(
     s.mod.mount(stage, { lang, host, chapter: opts.chapter });
     renderExplain();
     renderNotebook();
+    renderQrr();
     let last = performance.now();
     const loop = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000);
@@ -199,6 +205,7 @@ function afterChapter(): void {
   paintTabs();
   renderExplain();
   renderNotebook();
+  renderQrr();
   s.els.explain.scrollTop = 0;
 }
 
@@ -305,10 +312,40 @@ function renderNotebook(): void {
     s.notes = {};
     saveNotes(s.prize.sim, s.notes);
     renderNotebook();
+    renderQrr();
   });
   const kids: HTMLElement[] = [h('h3', null, S.notebook), items.length ? h('ol', { class: 'nb-list' }, items) : h('p', { class: 'nb-empty' }, S.notebookEmpty)];
   if (all && mod.abstract) kids.push(h('div', { class: 'abstract' }, h('h4', null, S.abstract), h('p', null, mod.abstract(lang, s.notes))));
   if (items.length) kids.push(clear);
   box.replaceChildren(...kids);
   paintChapters();
+}
+
+/** 지금 장의 질문, 연구(진행한 단계), 결과(내가 잰 값으로 채운 노트) */
+function renderQrr(): void {
+  const s = cur;
+  const mod = s?.mod;
+  if (!s || !mod) return;
+  const box = s.els.qrr;
+  const ch = mod.chapter?.();
+  const qr = qrrFor(s.prize.sim, ch, lang);
+  if (!qr) {
+    box.hidden = true;
+    return;
+  }
+  box.hidden = false;
+  const ms = mod.missions();
+  const n = ms.filter((m) => s.done.has(m.id)).length;
+  const steps = h(
+    'p',
+    { class: 'qrr-steps' },
+    h('span', null, `${S.qrrSteps} ${n}/${ms.length}`),
+    ...ms.map((m, i) => h('span', { class: `ck${s.done.has(m.id) ? ' done' : ''}`, title: m[lang], 'aria-hidden': 'true' }, s.done.has(m.id) ? '✓' : String(i + 1))),
+  );
+  const lines = Object.values((ch && s.notes[ch]) || {});
+  box.replaceChildren(
+    h('div', { class: 'qrr-item qrr-q' }, h('h3', null, S.qrrQuestion), h('p', null, qr.q)),
+    h('div', { class: 'qrr-item' }, h('h3', null, S.qrrResearch), h('p', null, qr.r), steps),
+    h('div', { class: `qrr-item qrr-res${lines.length ? '' : ' is-empty'}` }, h('h3', null, S.qrrResult), ...(lines.length ? lines.map((t) => h('p', null, t)) : [h('p', null, S.qrrResultEmpty)])),
+  );
 }

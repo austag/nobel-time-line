@@ -486,6 +486,71 @@ button {
   display: flex;
   flex-direction: column;
 }
+.qrr {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px;
+  border-bottom: 2.5px solid var(--ink);
+}
+.qrr[hidden] {
+  display: none;
+}
+.qrr-item {
+  border: 2px solid var(--ink);
+  background: var(--surface);
+  padding: 10px 12px;
+}
+.qrr-item.qrr-q {
+  border-color: var(--blue);
+  box-shadow: 4px 4px 0 var(--blue);
+}
+.qrr-item.qrr-res.is-empty {
+  border-style: dashed;
+}
+.qrr-item h3 {
+  margin: 0 0 4px;
+  font: 400 17px var(--title);
+  color: var(--blue);
+}
+.qrr-item p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--blue);
+}
+.qrr-item p + p {
+  margin-top: 6px;
+}
+.qrr-res.is-empty p {
+  color: var(--ink);
+}
+.qrr-item p.qrr-item p.qrr-steps {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--ink);
+}
+.qrr-steps .ck {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  line-height: 1;
+}
+.qrr-steps .ck.done {
+  border-color: var(--blue);
+  color: var(--red);
+  font-size: 14px;
+}
 .ctrls {
   display: flex;
   flex-direction: column;
