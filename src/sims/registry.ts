@@ -6,6 +6,7 @@ const LOADERS: Record<string, () => Promise<{ default: SimFactory }>> = {
   '2026-physics-icecube': () => import('./2026-physics-icecube'),
   '2026-chemistry-soai': () => import('./2026-chemistry-soai'),
   '2026-medicine-optogenetics': () => import('./2026-medicine-optogenetics'),
+  '2025-physics-tunneling': () => import('./2025-physics-tunneling'),
 };
 
 export function hasSim(id: string): boolean {
