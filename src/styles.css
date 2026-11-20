@@ -244,8 +244,24 @@ button {
 }
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+  /* 필터로 카드가 몇 장만 남아도 한 줄에 세 장 크기를 지킨다 */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 26px;
+}
+@media (max-width: 1000px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.card-year {
+  margin-left: auto;
+  font: 400 18px / 1 var(--title);
+  color: var(--blue);
 }
 .card {
   background: var(--surface);

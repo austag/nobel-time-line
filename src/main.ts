@@ -130,7 +130,7 @@ function filtersHtml(): string {
   </section>`;
 }
 
-function cardHtml(p: Prize): string {
+function cardHtml(p: Prize, withYear = false): string {
   const s = t();
   const ko = state.lang === 'ko';
   const id = `card-${p.year}-${p.category}`;
@@ -146,7 +146,7 @@ function cardHtml(p: Prize): string {
     : '';
   return `
   <article class="card" id="${id}" tabindex="0" data-action="open" data-year="${p.year}" data-field="${p.category}">
-    <div class="card-field">${shape(p.category)}<span>${esc(s[p.category])}</span></div>
+    <div class="card-field">${shape(p.category)}<span>${esc(s[p.category])}</span>${withYear ? `<span class="card-year">${p.year}</span>` : ''}</div>
     <div class="card-preview">${previewSvg(p.sim)}</div>
     <h3 class="card-title">${esc(ko ? p.title_ko : p.title_en)}</h3>
     <p class="card-summary">${esc(ko ? p.summary_ko : p.summary_en)}</p>
@@ -166,13 +166,15 @@ function listHtml(): string {
       (state.year === 'all' || p.year === state.year),
   );
   if (shown.length === 0) return `<p class="empty">${esc(t().empty)}</p>`;
+  // 부문만 고르면 연도별로 나누지 않고 한 격자에 이어 놓아 한 줄에 세 장씩 보이게 한다
+  if (state.field !== 'all' && state.year === 'all') return `<div class="grid">${shown.map((p) => cardHtml(p, true)).join('')}</div>`;
   const years = [...new Set(shown.map((p) => p.year))];
   return years
     .map(
       (y) => `
     <section class="year-group">
       <h2 class="year-heading">${y}</h2>
-      <div class="grid">${shown.filter((p) => p.year === y).map(cardHtml).join('')}</div>
+      <div class="grid">${shown.filter((p) => p.year === y).map((p) => cardHtml(p)).join('')}</div>
     </section>`,
     )
     .join('');
