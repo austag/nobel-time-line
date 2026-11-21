@@ -103,6 +103,24 @@ const QRR: Record<string, Record<string, Entry>> = {
       en: { q: 'Can these pores pull drinking water out of dry desert air?', r: 'With MOFs whose water step sits at different humidities, I ran a day cycle of capturing vapour at night and releasing it by heating in the day, and measured the yield.' },
     },
   },
+  '2025-medicine-treg': {
+    '1': {
+      ko: { q: '면역세포를 없앴는데 왜 공격이 더 심해질까?', r: '갓 태어난 생쥐의 가슴샘을 떼는 시점을 바꿔 가며 8주 뒤 자가면역을 재고, 정상 생쥐의 T세포를 넣어 병이 가라앉는지 확인했다.' },
+      en: { q: 'Why does removing immune cells make the attack worse?', r: 'Changing the day the newborn mouse lost its thymus, I measured autoimmunity at eight weeks and checked whether T cells from a normal mouse calmed it.' },
+    },
+    '2': {
+      ko: { q: '브레이크를 쥔 세포는 어떤 명찰을 달고 있을까?', r: '사카구치처럼 CD4 와 CD25 를 명찰 삼아 T세포를 두 통에 가려 담고, 어느 무리를 넣었을 때 병이 생기고 어느 무리가 그 병을 막는지 대조군과 함께 비교했다.' },
+      en: { q: 'What tags do the cells holding the brake carry?', r: 'Like Sakaguchi, I sorted T cells into two piles by CD4 and CD25 and compared, against controls, which pile caused disease and which prevented it.' },
+    },
+    '3': {
+      ko: { q: '브레이크를 쥔 세포는 어떤 설계도로 만들어질까?', r: '브런코와 램즈델처럼 X 염색체의 구간을 약 50만 염기까지 좁혀 후보 20개를 추리고, 하나씩 정상 생쥐와 맞춰 본 뒤 사람 환자에게서도 같은 고장을 확인했다.' },
+      en: { q: 'From what blueprint are the cells holding the brake built?', r: 'Like Brunkow and Ramsdell, I narrowed the X chromosome to about 500,000 bases and 20 candidates, checked each against a normal mouse, and found the same break in human patients.' },
+    },
+    '4': {
+      ko: { q: '브레이크를 더 밟아야 할까, 풀어 줘야 할까?', r: 'Foxp3 를 껐다 켜 조절 T세포가 만들어지는 것을 확인하고, 그 비율을 바꿔 가며 종양 크기와 자기 몸 손상을 함께 쟀다.' },
+      en: { q: 'Should the brake be pressed harder or let go?', r: 'Switching Foxp3 off and on to see regulatory T cells appear, I changed their fraction and measured tumour size and self damage together.' },
+    },
+  },
 };
 
 export function qrrFor(sim: string, chapter: string | undefined, lang: Lang): QR | null {
